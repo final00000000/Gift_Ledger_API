@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gift Ledger API · 文档</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎁</text></svg>">
+  <style>
+    :root{
+      color-scheme: light dark;
+      --bg:#0b1220; --panel:rgba(255,255,255,.06); --border:rgba(255,255,255,.12);
+      --text:#e8eefc; --muted:rgba(232,238,252,.72);
+      --brand:#6366f1; --brand2:#8b5cf6; --ok:#10b981; --warn:#f59e0b; --bad:#ef4444; --info:#3b82f6;
+      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",Arial,sans-serif;
+    }
+    @media (prefers-color-scheme: light){
+      :root{--bg:#f6f7fb; --panel:rgba(17,24,39,.04); --border:rgba(17,24,39,.10); --text:#111827; --muted:rgba(17,24,39,.70);}
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans); color:var(--text); background:
+        radial-gradient(900px 520px at 10% 0%, rgba(99,102,241,.20), transparent 60%),
+        radial-gradient(760px 520px at 90% 10%, rgba(139,92,246,.16), transparent 55%),
+        var(--bg);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    a{color:inherit; text-decoration:none}
+    .top{position:sticky; top:0; z-index:10; border-bottom:1px solid var(--border); background:color-mix(in srgb, var(--bg), transparent 25%); backdrop-filter:blur(14px)}
+    .topin{max-width:1100px; margin:0 auto; padding:12px 16px; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+    .brand{display:flex; gap:10px; align-items:center; font-weight:800}
+    .brand .name{background:linear-gradient(135deg,var(--brand),var(--brand2)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent}
+    .nav{display:flex; gap:8px; flex-wrap:wrap}
+    .nav a{font-size:13px; padding:7px 10px; border-radius:10px; border:1px solid transparent; color:var(--muted)}
+    .nav a:hover{border-color:var(--border); background:var(--panel); color:var(--text)}
+    .wrap{max-width:1100px; margin:0 auto; padding:16px}
+    .hero{border:1px solid var(--border); background:linear-gradient(135deg, rgba(99,102,241,.16), rgba(139,92,246,.10)); border-radius:16px; padding:16px}
+    .hero h1{margin:0 0 6px; font-size:20px}
+    .hero p{margin:0; color:var(--muted); line-height:1.55}
+    .row{display:grid; grid-template-columns:1fr auto auto; gap:10px; margin-top:12px}
+    input, select, button{
+      border:1px solid var(--border); background:var(--panel); color:var(--text);
+      border-radius:12px; padding:10px 12px; font-size:14px; outline:none;
+    }
+    button{cursor:pointer; font-weight:700; background:linear-gradient(135deg, rgba(99,102,241,.22), rgba(139,92,246,.16))}
+    button:active{transform:translateY(1px)}
+    .chips{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; color:var(--muted); font-size:13px}
+    .chips label{display:flex; align-items:center; gap:8px; padding:8px 10px; border:1px solid var(--border); border-radius:999px; background:var(--panel)}
+    .chips input{accent-color:var(--brand)}
+    .meta{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
+    .badge{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid var(--border); background:var(--panel); font-size:12px; color:var(--muted)}
+    .dot{width:8px; height:8px; border-radius:99px; display:inline-block}
+    .dot.ok{background:var(--ok)} .dot.warn{background:var(--warn)} .dot.bad{background:var(--bad)}
+    .content{margin-top:14px}
+    .tag{border:1px solid var(--border); border-radius:16px; background:var(--panel); padding:12px; margin:10px 0}
+    .tag h2{margin:0; font-size:16px}
+    .tag .desc{color:var(--muted); font-size:13px; margin-top:4px}
+    details{border:1px solid var(--border); border-radius:14px; background:color-mix(in srgb, var(--panel), transparent 0%); margin-top:10px; overflow:hidden}
+    summary{cursor:pointer; list-style:none; padding:10px 12px; display:grid; grid-template-columns:82px 1fr auto; gap:10px; align-items:center}
+    summary::-webkit-details-marker{display:none}
+    .method{font-family:var(--mono); font-weight:800; font-size:12px; padding:6px 10px; border-radius:999px; text-align:center; border:1px solid var(--border)}
+    .GET{background:color-mix(in srgb, var(--info), transparent 84%)} .POST{background:color-mix(in srgb, var(--ok), transparent 84%)}
+    .PUT,.PATCH{background:color-mix(in srgb, var(--warn), transparent 84%)} .DELETE{background:color-mix(in srgb, var(--bad), transparent 84%)}
+    .path{font-family:var(--mono); font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .sum{font-size:13px; color:var(--muted); margin-top:3px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical}
+    .pill{font-size:12px; color:var(--muted); border:1px solid var(--border); background:var(--panel); border-radius:999px; padding:6px 10px; white-space:nowrap}
+    .pill.auth{border-color:color-mix(in srgb, var(--warn), transparent 55%); color:color-mix(in srgb, var(--warn), var(--text) 20%)}
+    .body{border-top:1px solid var(--border); padding:12px}
+    pre{margin:0; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background:color-mix(in srgb, var(--panel), transparent 0%); overflow:auto; font-family:var(--mono); font-size:12px; line-height:1.5}
+    table{width:100%; border-collapse:collapse; font-size:13px}
+    th,td{padding:10px 10px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top}
+    th{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.3px}
+    code{font-family:var(--mono); font-size:12px}
+    .footer{margin:18px 0 40px; text-align:center; color:var(--muted); font-size:12px}
+    @media (max-width:900px){.row{grid-template-columns:1fr} summary{grid-template-columns:74px 1fr} summary .right{grid-column:1 / -1}}
+  </style>
+</head>
+<body>
+  <div class="top">
+    <div class="topin">
+      <a class="brand" href="/api-docs.html"><span>🎁</span><span class="name">Gift Ledger API</span></a>
+      <nav class="nav">
+        <a href="/" title="交互式">Swagger</a>
+        <a href="/redoc.html" title="阅读友好">ReDoc</a>
+        <a href="/openapi.json" title="OpenAPI JSON">OpenAPI</a>
+        <a href="/health" title="健康检查">Health</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="hero">
+      <h1 id="title">API 文档</h1>
+      <p id="desc">从 <code>/openapi.json</code> 自动生成（无需手写、不会过时）。</p>
+      <div class="row">
+        <input id="q" placeholder="搜索：/path、summary、tag…" autocomplete="off" />
+        <select id="server" title="Base URL"></select>
+        <button id="copyBase" type="button">复制 Base URL</button>
+      </div>
+      <div class="chips">
+        <label><input id="onlyAuth" type="checkbox" />仅需要认证</label>
+        <label><input id="onlyWrite" type="checkbox" />仅写操作</label>
+        <label><input id="collapse" type="checkbox" />默认收起详情</label>
+      </div>
+      <div class="meta">
+        <span class="badge" id="bHealth"><span class="dot warn"></span><span>状态：未知</span></span>
+        <span class="badge" id="bVer"><span class="dot ok"></span><span>版本：-</span></span>
+        <span class="badge" id="bBase"><span class="dot ok"></span><span>Base URL：-</span></span>
+        <span class="badge" id="bCount"><span class="dot ok"></span><span>接口：-</span></span>
+      </div>
+    </section>
+
+    <div class="content" id="content"></div>
+    <div class="footer" id="footer"></div>
+  </div>
+
+  <script>
+    const escapeHtml = (s) => String(s ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+
+    const byMethodWeight = (m) => ({GET:1,POST:2,PUT:3,PATCH:4,DELETE:5}[m] ?? 99);
+    const normalizeTag = (t) => (t || "未分组").trim() || "未分组";
+    const pickJsonSchema = (op) => {
+      const c = op?.requestBody?.content;
+      if (!c) return null;
+      return (c["application/json"] || c["application/*+json"])?.schema || null;
+    };
+    const resolveRef = (spec, schema) => {
+      if (!schema || typeof schema !== "object" || !schema.$ref) return schema;
+      const ref = schema.$ref;
+      if (!ref.startsWith("#/")) return schema;
+      const parts = ref.slice(2).split("/");
+      let cur = spec;
+      for (const p of parts) { cur = cur?.[p]; if (!cur) return schema; }
+      return cur;
+    };
+    const schemaInline = (spec, schema, depth = 0) => {
+      const s = resolveRef(spec, schema);
+      if (!s || typeof s !== "object") return "unknown";
+      if (depth > 2) return s.type || (s.properties ? "object" : (s.items ? "array" : "unknown"));
+      if (s.enum) return `enum(${s.enum.map(v => JSON.stringify(v)).join(", ")})`;
+      if (s.type === "array") return `array<${schemaInline(spec, s.items, depth + 1)}>`;
+      if (s.type === "object" || s.properties) return "object";
+      if (s.format) return `${s.type || "string"}(${s.format})`;
+      return s.type || "unknown";
+    };
+
+    function opsFromSpec(spec){
+      const ops = [];
+      for (const [path, item] of Object.entries(spec.paths || {})) {
+        for (const [m, op] of Object.entries(item || {})) {
+          const method = m.toUpperCase();
+          if (!["GET","POST","PUT","PATCH","DELETE"].includes(method)) continue;
+          if (!op || typeof op !== "object") continue;
+          const tags = (op.tags?.length ? op.tags : ["未分组"]).map(normalizeTag);
+          ops.push({ path, method, op, tags });
+        }
+      }
+      ops.sort((a,b)=> byMethodWeight(a.method)-byMethodWeight(b.method) || a.path.localeCompare(b.path));
+      return ops;
+    }
+
+    function tagGroups(ops){
+      const m = new Map();
+      for (const o of ops) for (const t of o.tags) (m.get(t) || m.set(t, []).get(t)).push(o);
+      return [...m.entries()].map(([tag, items]) => ({ tag, items }));
+    }
+
+    function buildCurl(baseUrl, o){
+      const needsAuth = !!(o.op.security && o.op.security.length);
+      const headers = [`-H "Content-Type: application/json"`];
+      if (needsAuth) headers.push(`-H "Authorization: Bearer <accessToken>"`);
+      const body = pickJsonSchema(o.op) ? ` \\\n  -d '{...}'` : "";
+      return `curl -X ${o.method} "${baseUrl}${o.path}" \\\n  ${headers.join(" \\\n  ")}${body}`;
+    }
+
+    async function copy(text){
+      try { await navigator.clipboard.writeText(text); }
+      catch (_) { const ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.left="-9999px"; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); }
+    }
+
+    function render(spec, groups){
+      const q = document.getElementById("q").value.trim().toLowerCase();
+      const onlyAuth = document.getElementById("onlyAuth").checked;
+      const onlyWrite = document.getElementById("onlyWrite").checked;
+      const collapse = document.getElementById("collapse").checked;
+      const baseUrl = document.getElementById("server").value || location.origin;
+      document.getElementById("bBase").innerHTML = `<span class="dot ok"></span><span>Base URL：${escapeHtml(baseUrl)}</span>`;
+
+      let count = 0;
+      const blocks = [];
+
+      for (const g of groups) {
+        const tagDesc = (spec.tags || []).find(t => t.name === g.tag)?.description || "";
+        const items = g.items.filter(o => {
+          const hay = `${o.method} ${o.path} ${o.op.summary || ""} ${o.op.description || ""} ${o.tags.join(" ")}`.toLowerCase();
+          if (q && !hay.includes(q)) return false;
+          const needsAuth = !!(o.op.security && o.op.security.length);
+          if (onlyAuth && !needsAuth) return false;
+          if (onlyWrite && o.method === "GET") return false;
+          return true;
+        });
+        if (!items.length) continue;
+        count += items.length;
+
+        blocks.push(`<section class="tag">
+          <h2 id="tag-${encodeURIComponent(g.tag)}">${escapeHtml(g.tag)}</h2>
+          <div class="desc">${escapeHtml(tagDesc) || "<span class='muted'>-</span>"}</div>
+          ${items.map(o => {
+            const needsAuth = !!(o.op.security && o.op.security.length);
+            const curl = buildCurl(baseUrl, o);
+            const params = o.op.parameters || [];
+            const responses = o.op.responses || {};
+            const respRows = Object.entries(responses).map(([code, resp]) => {
+              const desc = escapeHtml(resp?.description || "");
+              const cTypes = resp?.content ? Object.keys(resp.content).join(", ") : "-";
+              return `<tr><td><code>${escapeHtml(code)}</code></td><td>${desc || "<span class='muted'>-</span>"}</td><td><code>${escapeHtml(cTypes)}</code></td></tr>`;
+            }).join("");
+
+            return `<details ${collapse ? "" : "open"}>
+              <summary class="endpoint-summary">
+                <div class="method ${o.method}">${o.method}</div>
+                <div>
+                  <div class="path">${escapeHtml(o.path)}</div>
+                  <div class="sum">${escapeHtml(o.op.summary || o.op.description || "-")}</div>
+                </div>
+                <div class="right" style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end">
+                  ${needsAuth ? `<span class="pill auth">需要认证</span>` : `<span class="pill">公开</span>`}
+                  ${o.op.operationId ? `<span class="pill"><code>${escapeHtml(o.op.operationId)}</code></span>` : ""}
+                </div>
+              </summary>
+              <div class="body">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px" class="respgrid">
+                  <div>
+                    <div class="pill" style="display:inline-flex; gap:8px; margin-bottom:10px"><span>请求</span></div>
+                    <div style="color:var(--muted); font-size:13px; margin-bottom:10px">
+                      认证：<code>${needsAuth ? "Authorization: Bearer <accessToken>" : "不需要"}</code>
+                    </div>
+                    ${params.length ? `
+                      <table>
+                        <thead><tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr></thead>
+                        <tbody>
+                          ${params.map(p => {
+                            const required = p.required ? `<span class="req">必填</span>` : `<span class="muted">可选</span>`;
+                            return `<tr>
+                              <td><code>${escapeHtml(p.name)}</code><div class="muted" style="margin-top:4px">${escapeHtml(p.in)}</div></td>
+                              <td><code>${escapeHtml(schemaInline(spec, p.schema))}</code></td>
+                              <td>${required}</td>
+                              <td>${escapeHtml(p.description || "") || "<span class='muted'>-</span>"}</td>
+                            </tr>`;
+                          }).join("")}
+                        </tbody>
+                      </table>` : `<div class="muted" style="font-size:13px">无 query/path/header 参数</div>`}
+                    ${pickJsonSchema(o.op) ? `<div class="muted" style="font-size:13px; margin-top:10px">Body Schema：<code>${escapeHtml(schemaInline(spec, pickJsonSchema(o.op)))}</code></div>` : `<div class="muted" style="font-size:13px; margin-top:10px">无 JSON 请求体</div>`}
+                  </div>
+                  <div>
+                    <div class="pill" style="display:inline-flex; gap:8px; margin-bottom:10px"><span>响应</span></div>
+                    <table>
+                      <thead><tr><th>状态码</th><th>说明</th><th>Content-Type</th></tr></thead>
+                      <tbody>${respRows || `<tr><td colspan="3" class="muted">-</td></tr>`}</tbody>
+                    </table>
+                  </div>
+                </div>
+                <div style="margin-top:12px">
+                  <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:10px">
+                    <button type="button" data-copy="${escapeHtml(curl)}" style="padding:8px 12px">复制 curl</button>
+                    <span class="muted" style="font-size:13px">Base URL 使用上方选择</span>
+                  </div>
+                  <pre><code>${escapeHtml(curl)}</code></pre>
+                </div>
+              </div>
+            </details>`;
+          }).join("")}
+        </section>`);
+      }
+
+      document.getElementById("content").innerHTML = blocks.join("") || `<section class="tag"><h2>没有匹配结果</h2><div class="desc">试试清空搜索或关闭筛选条件。</div></section>`;
+      document.getElementById("bCount").innerHTML = `<span class="dot ok"></span><span>接口：${count}</span>`;
+
+      document.querySelectorAll("button[data-copy]").forEach(btn => {
+        btn.addEventListener("click", async () => { await copy(btn.getAttribute("data-copy") || ""); btn.textContent = "已复制"; setTimeout(()=>btn.textContent="复制 curl", 800); });
+      });
+
+      // mobile: avoid squished 2-col
+      document.querySelectorAll(".respgrid").forEach(g => {
+        if (window.matchMedia("(max-width: 900px)").matches) g.style.gridTemplateColumns = "1fr";
+      });
+    }
+
+    async function main(){
+      // health
+      try { const r = await fetch("/health", { cache:"no-store" }); if (!r.ok) throw 0; document.getElementById("bHealth").innerHTML = `<span class="dot ok"></span><span>状态：运行中</span>`; }
+      catch (_) { document.getElementById("bHealth").innerHTML = `<span class="dot bad"></span><span>状态：不可用</span>`; }
+
+      let spec;
+      try { const r = await fetch("/openapi.json", { cache:"no-store" }); if (!r.ok) throw new Error(`HTTP ${r.status}`); spec = await r.json(); }
+      catch (e) {
+        document.getElementById("content").innerHTML = `<section class="tag"><h2>加载失败</h2><div class="desc">无法获取 <code>/openapi.json</code>：${escapeHtml(String(e))}</div></section>`;
+        return;
+      }
+
+      document.getElementById("title").textContent = spec.info?.title || "Gift Ledger API";
+      document.getElementById("desc").innerHTML = (spec.info?.description ? escapeHtml(spec.info.description).replaceAll("\n", "<br/>") : "（无描述）");
+      document.getElementById("bVer").innerHTML = `<span class="dot ok"></span><span>版本：${escapeHtml(spec.info?.version || "-")}</span>`;
+
+      const servers = (spec.servers?.length ? spec.servers : [{ url: location.origin, description: "当前访问地址" }]);
+      const serverSel = document.getElementById("server");
+      serverSel.innerHTML = servers.map(s => {
+        const url = s.url || "";
+        const label = s.description ? `${s.description} (${url})` : url;
+        return `<option value="${escapeHtml(url)}">${escapeHtml(label)}</option>`;
+      }).join("");
+      serverSel.value = servers[0].url || location.origin;
+      document.getElementById("bBase").innerHTML = `<span class="dot ok"></span><span>Base URL：${escapeHtml(serverSel.value)}</span>`;
+
+      const ops = opsFromSpec(spec);
+      const groups = tagGroups(ops);
+      const year = new Date().getFullYear();
+      document.getElementById("footer").textContent = `Gift Ledger API · v${spec.info?.version || "-"} · ${year}`;
+
+      const rerender = () => render(spec, groups);
+      document.getElementById("q").addEventListener("input", rerender);
+      document.getElementById("onlyAuth").addEventListener("change", rerender);
+      document.getElementById("onlyWrite").addEventListener("change", rerender);
+      document.getElementById("collapse").addEventListener("change", rerender);
+      serverSel.addEventListener("change", rerender);
+      document.getElementById("copyBase").addEventListener("click", async () => { await copy(serverSel.value || location.origin); });
+
+      rerender();
+    }
+
+    main();
+  </script>
+</body>
+</html>

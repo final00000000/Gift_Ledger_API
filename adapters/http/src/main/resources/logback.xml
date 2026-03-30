@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 控制台输出 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 文件输出（可选） -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/gift-ledger.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/gift-ledger.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 应用日志级别 -->
+    <logger name="com.giftledger" level="INFO"/>
+
+    <!-- Ktor 日志级别 -->
+    <logger name="io.ktor" level="INFO"/>
+
+    <!-- Netty 日志级别（减少噪音） -->
+    <logger name="io.netty" level="WARN"/>
+
+    <!-- HikariCP 日志级别 -->
+    <logger name="com.zaxxer.hikari" level="INFO"/>
+
+    <!-- Exposed 日志级别 -->
+    <logger name="Exposed" level="INFO"/>
+
+    <!-- 根日志级别 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <!-- 如果需要文件日志，取消下面的注释 -->
+        <!-- <appender-ref ref="FILE"/> -->
+    </root>
+</configuration>

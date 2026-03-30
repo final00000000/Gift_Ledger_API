@@ -1,0 +1,24 @@
+package org.example.utils
+
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlinx.serialization.json.Json
+
+internal class PrinterTest {
+
+    @Test
+    fun testMessage() {
+        val message = "message"
+        val testPrinter = Printer(message)
+        assertEquals(testPrinter.message, message)
+    }
+
+    @Test
+    fun testSerialization() {
+        val message = "message"
+        val printer = Printer(message)
+        val json1 = Json.encodeToString(Printer.serializer(), printer)
+        val json2 = Json.encodeToString(Printer.serializer(), Printer(message))
+        assertEquals(json1, json2)
+    }
+}

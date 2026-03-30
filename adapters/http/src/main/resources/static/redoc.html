@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Ledger API - ReDoc</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎁</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+            background: var(--bg-dark);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .header {
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10000;
+            padding: 0 24px;
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+        
+        .logo-icon { font-size: 24px; }
+        
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .nav-link:hover {
+            color: var(--text-primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        .nav-link.active {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.15);
+        }
+        
+        .nav-link svg {
+            width: 14px;
+            height: 14px;
+        }
+        
+        redoc {
+            display: block;
+            margin-top: 60px;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                height: auto;
+                padding: 12px 0;
+                gap: 10px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            redoc {
+                margin-top: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <span class="logo-icon">🎁</span>
+                <span class="logo-text">Gift Ledger API</span>
+            </a>
+            <nav class="nav-links">
+                <a href="/" class="nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    Swagger
+                </a>
+                <a href="/redoc.html" class="nav-link active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                    ReDoc
+                </a>
+                <a href="/api-docs.html" class="nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 7h-9"/>
+                        <path d="M14 17H5"/>
+                        <circle cx="17" cy="17" r="3"/>
+                        <circle cx="7" cy="7" r="3"/>
+                    </svg>
+                    API Docs
+                </a>
+                <a href="/openapi.json" class="nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 18 22 12 16 6"/>
+                        <polyline points="8 6 2 12 8 18"/>
+                    </svg>
+                    OpenAPI
+                </a>
+                <a href="/health" class="nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                    </svg>
+                    健康检查
+                </a>
+            </nav>
+        </div>
+    </header>
+    
+    <redoc 
+        spec-url='/openapi.json'
+        hide-download-button="false"
+        theme='{
+            "colors": {
+                "primary": { "main": "#6366f1" },
+                "success": { "main": "#10b981" },
+                "warning": { "main": "#f59e0b" },
+                "error": { "main": "#ef4444" },
+                "text": { "primary": "#f8fafc", "secondary": "#94a3b8" },
+                "http": {
+                    "get": "#3b82f6",
+                    "post": "#10b981",
+                    "put": "#f59e0b",
+                    "delete": "#ef4444"
+                }
+            },
+            "typography": {
+                "fontSize": "15px",
+                "fontFamily": "Microsoft YaHei, 微软雅黑, PingFang SC, Hiragino Sans GB, sans-serif",
+                "headings": { "fontFamily": "Microsoft YaHei, 微软雅黑, sans-serif", "fontWeight": "600" },
+                "code": { "fontFamily": "JetBrains Mono, Consolas, monospace", "fontSize": "13px" }
+            },
+            "sidebar": {
+                "backgroundColor": "#0f172a",
+                "textColor": "#94a3b8",
+                "activeTextColor": "#f8fafc",
+                "groupItems": { "textTransform": "none" }
+            },
+            "rightPanel": {
+                "backgroundColor": "#1e293b"
+            },
+            "schema": {
+                "nestedBackground": "#0f172a"
+            }
+        }'
+    ></redoc>
+    
+    <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
+</body>
+</html>
