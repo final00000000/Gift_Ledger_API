@@ -48,12 +48,12 @@ class AuthService(
         return digest.joinToString(separator = "") { b -> "%02x".format(b) }
     }
 
-    fun register(email: String, password: String): AuthUser {
+    fun register(email: String, password: String, username: String? = null, fullName: String? = null): AuthUser {
         val existing = userRepository.findByEmail(email)
         if (existing != null) throw IllegalArgumentException("邮箱已注册")
 
         val passwordHash = passwordHasher.hash(password)
-        val user = userRepository.create(email, passwordHash)
+        val user = userRepository.create(email, passwordHash, username, fullName)
         return AuthUser(user.id.value.toString(), user.email)
     }
 

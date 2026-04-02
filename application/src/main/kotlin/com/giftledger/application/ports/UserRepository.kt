@@ -4,7 +4,7 @@ import com.giftledger.domain.User
 import com.giftledger.domain.UserId
 
 interface UserRepository {
-    fun create(email: String, passwordHash: String): User
+    fun create(email: String, passwordHash: String, username: String? = null, fullName: String? = null): User
     fun findById(id: UserId): User?
     fun findByEmail(email: String): User?
     fun updatePasswordHash(id: UserId, newPasswordHash: String): Boolean

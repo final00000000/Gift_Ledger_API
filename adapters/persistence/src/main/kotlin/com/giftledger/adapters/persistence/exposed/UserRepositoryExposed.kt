@@ -13,18 +13,18 @@ import java.util.UUID
 
 class UserRepositoryExposed : UserRepository {
 
-    override fun create(email: String, passwordHash: String): User {
+    override fun create(email: String, passwordHash: String, username: String?, fullName: String?): User {
         val now = LocalDateTime.now()
         val id = UUID.randomUUID()
-        val username = email.substringBefore("@")
+        val resolvedUsername = username ?: email.substringBefore("@")
 
         transaction {
             UsersTable.insert {
                 it[UsersTable.id] = id.toString()
-                it[UsersTable.username] = username
+                it[UsersTable.username] = resolvedUsername
                 it[UsersTable.email] = email
                 it[UsersTable.passwordHash] = passwordHash
-                it[UsersTable.fullName] = null
+                it[UsersTable.fullName] = fullName
                 it[UsersTable.createdAt] = now
                 it[UsersTable.updatedAt] = now
             }
@@ -32,9 +32,9 @@ class UserRepositoryExposed : UserRepository {
 
         return User(
             id = UserId(id),
-            username = username,
+            username = resolvedUsername,
             email = email,
-            fullName = null,
+            fullName = fullName,
             passwordHash = passwordHash,
             createdAt = now.toInstant(ZoneOffset.UTC),
             updatedAt = now.toInstant(ZoneOffset.UTC)

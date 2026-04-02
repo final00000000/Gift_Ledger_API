@@ -12,6 +12,8 @@ data class SummaryReport(
     val totalSent: Double,
     val netBalance: Double,
     val pendingCount: Int,
+    val giftCount: Int = 0,
+    val guestCount: Int = 0,
 )
 
 @Serializable

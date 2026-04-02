@@ -61,7 +61,7 @@ fun Application.authRoutes() {
         post("/auth/register") {
             try {
                 val request = call.receive<RegisterRequest>()
-                val authUser = authService.register(request.email, request.password)
+                val authUser = authService.register(request.email, request.password, request.username, request.fullName)
                 val response = UserRegisterResponse(
                     id = authUser.id,
                     username = request.username,

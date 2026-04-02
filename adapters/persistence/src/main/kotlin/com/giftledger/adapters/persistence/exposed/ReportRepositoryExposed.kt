@@ -20,9 +20,13 @@ class ReportRepositoryExposed : ReportRepository {
         var totalReceived = 0.0
         var totalSent = 0.0
         var pendingCount = 0
+        var giftCount = 0
+        val guestIds = mutableSetOf<String>()
 
         query.forEach { row ->
             val amount = row[GiftsTable.amount].toDouble()
+            giftCount++
+            guestIds.add(row[GiftsTable.guestId])
             if (row[GiftsTable.isReceived]) {
                 totalReceived += amount
                 if (!row[GiftsTable.isReturned]) pendingCount++
@@ -36,6 +40,8 @@ class ReportRepositoryExposed : ReportRepository {
             totalSent = totalSent,
             netBalance = totalReceived - totalSent,
             pendingCount = pendingCount,
+            giftCount = giftCount,
+            guestCount = guestIds.size,
         )
     }
 

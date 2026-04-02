@@ -49,8 +49,8 @@ fun Application.reportRoutes() {
                             totalReceived = summary.totalReceived,
                             totalSent = summary.totalSent,
                             netAmount = summary.netBalance,
-                            giftCount = summary.pendingCount,
-                            guestCount = 0,
+                            giftCount = summary.giftCount,
+                            guestCount = summary.guestCount,
                             period = "$from 至 $to"
                         )
 
