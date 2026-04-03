@@ -7,6 +7,7 @@ interface UserRepository {
     fun create(email: String, passwordHash: String, username: String? = null, fullName: String? = null): User
     fun findById(id: UserId): User?
     fun findByEmail(email: String): User?
+    fun findByUsername(username: String): User?
     fun updatePasswordHash(id: UserId, newPasswordHash: String): Boolean
     fun delete(id: UserId): Boolean
 

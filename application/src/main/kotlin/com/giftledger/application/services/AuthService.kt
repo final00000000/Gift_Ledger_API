@@ -49,11 +49,24 @@ class AuthService(
     }
 
     fun register(email: String, password: String, username: String? = null, fullName: String? = null): AuthUser {
-        val existing = userRepository.findByEmail(email)
-        if (existing != null) throw IllegalArgumentException("邮箱已注册")
+        val normalizedEmail = email.trim().lowercase()
+        val normalizedUsername = username?.trim().orEmpty()
+
+        if (normalizedUsername.isBlank()) {
+            throw IllegalArgumentException("用户名不能为空")
+        }
+        if (normalizedUsername.length < 2) {
+            throw IllegalArgumentException("用户名至少2个字符")
+        }
+
+        val existingEmail = userRepository.findByEmail(normalizedEmail)
+        if (existingEmail != null) throw IllegalArgumentException("邮箱已注册")
+
+        val existingUsername = userRepository.findByUsername(normalizedUsername)
+        if (existingUsername != null) throw IllegalArgumentException("用户名已存在")
 
         val passwordHash = passwordHasher.hash(password)
-        val user = userRepository.create(email, passwordHash, username, fullName)
+        val user = userRepository.create(normalizedEmail, passwordHash, normalizedUsername, fullName?.trim())
         return AuthUser(user.id.value.toString(), user.email)
     }
 

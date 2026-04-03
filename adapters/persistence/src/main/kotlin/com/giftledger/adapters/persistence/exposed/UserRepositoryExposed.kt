@@ -53,6 +53,12 @@ class UserRepositoryExposed : UserRepository {
             .singleOrNull()
     }
 
+    override fun findByUsername(username: String): User? = transaction {
+        UsersTable.selectAll().where { UsersTable.username eq username }
+            .map { it.toUser() }
+            .singleOrNull()
+    }
+
     override fun updatePasswordHash(id: UserId, newPasswordHash: String): Boolean = transaction {
         val updated = UsersTable.update({ UsersTable.id eq id.value.toString() }) {
             it[passwordHash] = newPasswordHash
